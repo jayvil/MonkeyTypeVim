@@ -33,6 +33,12 @@ export const VimTypeGame: React.FC = () => {
     }
   }, [isGameActive, timeLeft, endGame]);
 
+  const handleRestart = useCallback(() => {
+    endGame();
+    setTimeLeft(selectedDuration);
+    startGame();
+  }, [endGame, selectedDuration, startGame]);
+
   const handleInputChange = useCallback((value: string) => {
     updateUserInput(value);
   }, [updateUserInput]);
@@ -53,7 +59,6 @@ export const VimTypeGame: React.FC = () => {
       } else {
         finalDuration = customValue;
       }
-      // Update the custom duration input to show the clamped value
       setCustomDuration(finalDuration.toString());
       setSelectedDuration(finalDuration);
     }
@@ -134,6 +139,7 @@ export const VimTypeGame: React.FC = () => {
             userInput={userInput}
             onInputChange={handleInputChange}
             onSubmit={handleSubmit}
+            onRestart={handleRestart}
           />
         ) : (
           <div className="text-center">
@@ -148,6 +154,7 @@ export const VimTypeGame: React.FC = () => {
               style={{ color: currentTheme.colors.secondary }}
             >
               How many vim commands can you accurately enter? Type the Vim command and press Enter after each command.
+              Press Tab + Enter during the test to restart.
             </p>
             <button
               onClick={handleStart}

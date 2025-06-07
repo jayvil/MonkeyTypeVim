@@ -7,17 +7,20 @@ interface CommandDisplayProps {
   userInput: string;
   onInputChange: (value: string) => void;
   onSubmit: () => void;
+  onRestart: () => void;
 }
 
 export const CommandDisplay: React.FC<CommandDisplayProps> = ({ 
   command, 
   userInput, 
   onInputChange,
-  onSubmit 
+  onSubmit,
+  onRestart
 }) => {
   const { currentTheme } = useTheme();
   const [showAnswer, setShowAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [tabPressed, setTabPressed] = useState(false);
 
   // Hide answer when command changes (i.e., after submission)
   useEffect(() => {
@@ -30,10 +33,28 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
   }, [command]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      onSubmit();
-      // Prevent the button from being clicked if Enter was pressed
+    if (e.key === 'Tab') {
+      e.preventDefault(); // Prevent tab from moving focus
+      setTabPressed(true);
+    } else if (e.key === 'Enter') {
+      if (tabPressed) {
+        // If Tab was pressed before Enter, restart the game
+        onRestart();
+        setTabPressed(false);
+      } else {
+        // Normal submit
+        onSubmit();
+      }
       e.preventDefault();
+    } else {
+      // Any other key press resets the tab state
+      setTabPressed(false);
+    }
+  };
+
+  const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Tab') {
+      setTabPressed(false);
     }
   };
 
@@ -57,6 +78,7 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
           value={userInput}
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={handleKeyDown}
+          onKeyUp={handleKeyUp}
           className="w-full p-4 rounded-md font-mono text-xl focus:outline-none"
           style={{ 
             backgroundColor: `${currentTheme.colors.background}80`,
@@ -67,8 +89,9 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
           spellCheck="false"
         />
       </div>
-      <div style={{ color: currentTheme.colors.secondary }} className="text-sm">
-        Press Enter to submit your command.
+      <div style={{ color: currentTheme.colors.secondary }} className="text-sm flex flex-col items-center gap-1">
+        <div>Press Enter to submit your command.</div>
+        <div>Press Tab + Enter to restart the test.</div>
       </div>
       
       <div className="flex flex-col items-center gap-2">
