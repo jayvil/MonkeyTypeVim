@@ -29,7 +29,7 @@ export const Navigation: React.FC = () => {
         onClick={handleNavigation('/')}
         end
       >
-        Type Game
+        Vim Type Game
       </NavLink>
       <NavLink
         to="/learn"
