@@ -36,7 +36,7 @@ function AppContent() {
         <div className="container mx-auto flex justify-between items-center">
           <div className="flex items-center gap-8">
             <h1 className="text-2xl font-bold" style={{ color: currentTheme.colors.primary }}>
-              Monkey Type Vim
+              MonkeyTypeVim
             </h1>
             <Navigation />
           </div>
@@ -64,7 +64,7 @@ function AppContent() {
         <div className="container mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="text-sm">
-              VimType © {new Date().getFullYear()} - Built to help you master Vim commands
+              MonkeyTypeVim © {new Date().getFullYear()} - Built to help you master Vim commands
             </div>
 
             <div className="flex gap-6">
@@ -75,7 +75,7 @@ function AppContent() {
                 className="hover:opacity-100"
                 style={linkStyle}
               >
-                Monkey Type Vim GitHub
+                MonkeyTypeVim GitHub
               </a>
               <a
                 href="https://github.com/vim/vim"

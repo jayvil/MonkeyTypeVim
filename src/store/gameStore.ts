@@ -49,7 +49,7 @@ export const useGameStore = create<GameState>((set) => ({
 
   endGame: () => set((state) => ({
     isGameActive: false,
-    commandsPerSecond: state.correctCommands / vimCommands.length,
+    commandsPerSecond: state.correctCommands / 30, // Use time duration instead of commands length
     accuracy: Math.round((state.correctCommands / state.totalAttempts) * 100) || 0,
     totalCommands: state.correctCommands,
   })),
@@ -61,8 +61,11 @@ export const useGameStore = create<GameState>((set) => ({
 
     const isCorrect = state.userInput === state.commands[state.currentCommandIndex].command;
     
+    // Implement circular buffer by using modulo operator
+    const nextIndex = (state.currentCommandIndex + 1) % state.commands.length;
+    
     return {
-      currentCommandIndex: state.currentCommandIndex + 1,
+      currentCommandIndex: nextIndex,
       userInput: '',
       correctCommands: isCorrect ? state.correctCommands + 1 : state.correctCommands,
       totalAttempts: state.totalAttempts + 1,
