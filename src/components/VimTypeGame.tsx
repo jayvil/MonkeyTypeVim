@@ -5,6 +5,7 @@ import { Stats } from './Stats';
 import { Timer } from './Timer';
 import { useTheme } from '../hooks/useTheme';
 import { playEndChime } from '../utils/audio';
+import { TestHistory } from './TestHistory';
 
 export const VimTypeGame: React.FC = () => {
   const { currentTheme } = useTheme();
@@ -30,13 +31,13 @@ export const VimTypeGame: React.FC = () => {
       }, 1000);
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && isGameActive) {
-      endGame();
+      endGame(true);
       playEndChime();
     }
   }, [isGameActive, timeLeft, endGame]);
 
   const handleRestart = useCallback(() => {
-    endGame();
+    endGame(false);
     setTimeLeft(selectedDuration);
     startGame();
   }, [endGame, selectedDuration, startGame]);
@@ -84,7 +85,7 @@ export const VimTypeGame: React.FC = () => {
   };
 
   const handleStop = useCallback(() => {
-    endGame();
+    endGame(false);
   }, [endGame]);
 
   return (
@@ -201,6 +202,11 @@ export const VimTypeGame: React.FC = () => {
       </div>
 
       <Stats />
+      {!isGameActive && (
+        <div className="w-full mt-8">
+          <TestHistory />
+        </div>
+      )}
     </div>
   );
 };

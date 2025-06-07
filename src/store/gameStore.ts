@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { VimCommand } from '../types/game';
 import { vimCommands } from '../data/vimCommands';
+import { testResultsDB } from '../services/testResultsDB';
 
 interface GameState {
   commands: VimCommand[];
@@ -13,7 +14,7 @@ interface GameState {
   accuracy: number;
   totalCommands: number;
   startGame: () => void;
-  endGame: () => void;
+  endGame: (shouldSave: boolean) => void;
   updateUserInput: (input: string) => void;
   checkCommand: () => void;
 }
@@ -47,12 +48,27 @@ export const useGameStore = create<GameState>((set) => ({
     });
   },
 
-  endGame: () => set((state) => ({
-    isGameActive: false,
-    commandsPerSecond: state.correctCommands / 30, // Use time duration instead of commands length
-    accuracy: Math.round((state.correctCommands / state.totalAttempts) * 100) || 0,
-    totalCommands: state.correctCommands,
-  })),
+  endGame: (shouldSave: boolean) => set((state) => {
+    const commandsPerSecond = state.correctCommands / 30;
+    const accuracy = Math.round((state.correctCommands / state.totalAttempts) * 100) || 0;
+    const totalCommands = state.correctCommands;
+
+    // Only save test results if shouldSave is true
+    if (shouldSave) {
+      testResultsDB.saveTestResult({
+        commandsPerSecond,
+        accuracy,
+        totalCommands,
+      }).catch(error => console.error('Error saving test results:', error));
+    }
+
+    return {
+      isGameActive: false,
+      commandsPerSecond,
+      accuracy,
+      totalCommands,
+    };
+  }),
 
   updateUserInput: (input: string) => set({ userInput: input }),
 
