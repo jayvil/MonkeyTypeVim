@@ -1,20 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { VimCommand } from '../types/game';
 import { useTheme } from '../hooks/useTheme';
 
 interface CommandDisplayProps {
   command: VimCommand;
   userInput: string;
+  onInputChange: (value: string) => void;
+  onSubmit: () => void;
 }
 
-export const CommandDisplay: React.FC<CommandDisplayProps> = ({ command, userInput }) => {
+export const CommandDisplay: React.FC<CommandDisplayProps> = ({ 
+  command, 
+  userInput, 
+  onInputChange,
+  onSubmit 
+}) => {
   const { currentTheme } = useTheme();
   const [showAnswer, setShowAnswer] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // Hide answer when command changes (i.e., after submission)
   useEffect(() => {
     setShowAnswer(false);
   }, [command]);
+
+  // Focus input on mount and after command changes
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, [command]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      onSubmit();
+      // Prevent the button from being clicked if Enter was pressed
+      e.preventDefault();
+    }
+  };
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -30,19 +51,21 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({ command, userInp
       </div>
 
       <div className="w-full max-w-md">
-        <div 
-          className="p-4 rounded-md font-mono text-xl"
+        <input
+          ref={inputRef}
+          type="text"
+          value={userInput}
+          onChange={(e) => onInputChange(e.target.value)}
+          onKeyDown={handleKeyDown}
+          className="w-full p-4 rounded-md font-mono text-xl focus:outline-none"
           style={{ 
             backgroundColor: `${currentTheme.colors.background}80`,
-            border: `1px solid ${currentTheme.colors.secondary}40`
+            border: `1px solid ${currentTheme.colors.secondary}40`,
+            color: currentTheme.colors.primary,
           }}
-        >
-          <span style={{ color: currentTheme.colors.primary }}>{userInput}</span>
-          <span 
-            className="animate-pulse"
-            style={{ color: currentTheme.colors.secondary }}
-          >|</span>
-        </div>
+          autoComplete="off"
+          spellCheck="false"
+        />
       </div>
       <div style={{ color: currentTheme.colors.secondary }} className="text-sm">
         Press Enter to submit your command.
@@ -56,7 +79,11 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({ command, userInp
             color: currentTheme.colors.background,
           }}
           className="px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-          onClick={() => setShowAnswer(!showAnswer)}
+          onClick={() => {
+            setShowAnswer(!showAnswer);
+            // Refocus the input after showing/hiding answer
+            inputRef.current?.focus();
+          }}
         >
           {showAnswer ? 'Hide Answer' : 'Show Answer'}
         </button>

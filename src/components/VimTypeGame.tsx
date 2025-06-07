@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useGameStore } from '../store/gameStore';
 import { CommandDisplay } from './CommandDisplay';
 import { Stats } from './Stats';
@@ -33,22 +33,13 @@ export const VimTypeGame: React.FC = () => {
     }
   }, [isGameActive, timeLeft, endGame]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!isGameActive) return;
-    
-    if (e.key === 'Enter') {
-      checkCommand();
-    } else if (e.key === 'Backspace') {
-      updateUserInput(userInput.slice(0, -1));
-    } else if (e.key.length === 1) {
-      updateUserInput(userInput + e.key);
-    }
-  };
+  const handleInputChange = useCallback((value: string) => {
+    updateUserInput(value);
+  }, [updateUserInput]);
 
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
+  const handleSubmit = useCallback(() => {
+    checkCommand();
+  }, [checkCommand]);
 
   const handleStart = () => {
     let finalDuration = selectedDuration;
@@ -141,6 +132,8 @@ export const VimTypeGame: React.FC = () => {
           <CommandDisplay
             command={commands[currentCommandIndex]}
             userInput={userInput}
+            onInputChange={handleInputChange}
+            onSubmit={handleSubmit}
           />
         ) : (
           <div className="text-center">
