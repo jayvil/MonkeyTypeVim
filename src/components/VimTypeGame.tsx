@@ -20,6 +20,7 @@ export const VimTypeGame: React.FC = () => {
 
   const [timeLeft, setTimeLeft] = useState(30);
   const [selectedDuration, setSelectedDuration] = useState(30);
+  const [customDuration, setCustomDuration] = useState('');
 
   useEffect(() => {
     if (isGameActive && timeLeft > 0) {
@@ -50,15 +51,45 @@ export const VimTypeGame: React.FC = () => {
   }, [handleKeyDown]);
 
   const handleStart = () => {
-    setTimeLeft(selectedDuration);
+    let finalDuration = selectedDuration;
+    
+    if (customDuration) {
+      const customValue = parseInt(customDuration);
+      if (customValue < 5) {
+        finalDuration = 5;
+      } else if (customValue > 300) {
+        finalDuration = 300;
+      } else {
+        finalDuration = customValue;
+      }
+      // Update the custom duration input to show the clamped value
+      setCustomDuration(finalDuration.toString());
+      setSelectedDuration(finalDuration);
+    }
+    
+    setTimeLeft(finalDuration);
     startGame();
+  };
+
+  const handleCustomDurationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      setCustomDuration(value);
+      if (value && value !== '0') {
+        const numValue = parseInt(value);
+        if (numValue >= 5 && numValue <= 300) {
+          setSelectedDuration(numValue);
+          setTimeLeft(numValue);
+        }
+      }
+    }
   };
 
   return (
     <div className="mt-16 flex flex-col items-center gap-8 max-w-2xl mx-auto">
       <Timer timeLeft={timeLeft} isActive={isGameActive} />
       
-      <div className="flex gap-4">
+      <div className="flex gap-4 items-center">
         {[10, 30, 45, 60].map((duration) => (
           <button
             disabled={isGameActive}
@@ -72,11 +103,30 @@ export const VimTypeGame: React.FC = () => {
             onClick={() => {
               setSelectedDuration(duration);
               setTimeLeft(duration);
+              setCustomDuration('');
             }}
           >
             {duration}s
           </button>
         ))}
+        <div className="flex items-center gap-2">
+          <input
+            type="text"
+            disabled={isGameActive}
+            value={customDuration}
+            onChange={handleCustomDurationChange}
+            placeholder="Custom (5-300s)"
+            style={{
+              backgroundColor: `${currentTheme.colors.secondary}20`,
+              color: currentTheme.colors.text,
+              borderColor: currentTheme.colors.secondary,
+            }}
+            className="px-3 py-2 rounded-md border w-44 focus:outline-none focus:border-2"
+          />
+          {customDuration && (
+            <span style={{ color: currentTheme.colors.secondary }}>seconds</span>
+          )}
+        </div>
       </div>
 
       <div 

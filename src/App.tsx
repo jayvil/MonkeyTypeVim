@@ -67,7 +67,7 @@ function AppContent() {
 
             <div className="flex gap-6">
               <a
-                href=""
+                href="https://github.com/jayvil/MonkeyTypeVim/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:opacity-100"
