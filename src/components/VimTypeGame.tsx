@@ -81,9 +81,36 @@ export const VimTypeGame: React.FC = () => {
     }
   };
 
+  const handleStop = useCallback(() => {
+    endGame();
+  }, [endGame]);
+
   return (
     <div className="mt-16 flex flex-col items-center gap-8 max-w-2xl mx-auto">
-      <Timer timeLeft={timeLeft} isActive={isGameActive} />
+      <div className="flex items-center gap-4">
+        <Timer timeLeft={timeLeft} isActive={isGameActive} />
+        {isGameActive && (
+          <button
+            onClick={handleStop}
+            className="p-2 rounded-full hover:opacity-90 transition-all flex items-center justify-center"
+            style={{
+              backgroundColor: currentTheme.colors.secondary,
+              color: currentTheme.colors.background,
+            }}
+            title="Stop Test"
+          >
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="20" 
+              height="20" 
+              viewBox="0 0 24 24" 
+              fill="currentColor"
+            >
+              <rect x="6" y="6" width="12" height="12" />
+            </svg>
+          </button>
+        )}
+      </div>
       
       <div className="flex gap-4 items-center">
         {[10, 30, 45, 60].map((duration) => (
