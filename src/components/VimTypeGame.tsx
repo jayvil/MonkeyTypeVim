@@ -4,6 +4,7 @@ import { CommandDisplay } from './CommandDisplay';
 import { Stats } from './Stats';
 import { Timer } from './Timer';
 import { useTheme } from '../hooks/useTheme';
+import { playEndChime } from '../utils/audio';
 
 export const VimTypeGame: React.FC = () => {
   const { currentTheme } = useTheme();
@@ -30,6 +31,7 @@ export const VimTypeGame: React.FC = () => {
       return () => clearInterval(timer);
     } else if (timeLeft === 0 && isGameActive) {
       endGame();
+      playEndChime();
     }
   }, [isGameActive, timeLeft, endGame]);
 
@@ -83,6 +85,7 @@ export const VimTypeGame: React.FC = () => {
 
   const handleStop = useCallback(() => {
     endGame();
+    playEndChime();
   }, [endGame]);
 
   return (
