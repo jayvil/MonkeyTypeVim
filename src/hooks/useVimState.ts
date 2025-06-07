@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { VimState } from '../types/vim';
 import { getSampleText } from '../utils/textUtils';
 
@@ -13,7 +13,7 @@ export const useVimState = () => {
     commandBuffer: ''
   });
 
-  const resetState = () => {
+  const resetState = useCallback(() => {
     setVimState({
       mode: 'normal',
       content: getSampleText(),
@@ -23,9 +23,9 @@ export const useVimState = () => {
       lastCommand: '',
       commandBuffer: ''
     });
-  };
+  }, []);
 
-  const executeCommand = (key: string) => {
+  const executeCommand = useCallback((key: string) => {
     setVimState(prevState => {
       let newState = { ...prevState };
       
@@ -68,7 +68,7 @@ export const useVimState = () => {
           return prevState;
       }
     });
-  };
+  }, []);
 
   const handleNormalMode = (state: VimState, key: string): VimState => {
     const content = state.content;
@@ -243,5 +243,9 @@ export const useVimState = () => {
     }
   };
 
-  return { vimState, executeCommand, resetState };
+  return {
+    vimState,
+    executeCommand,
+    resetState
+  };
 };

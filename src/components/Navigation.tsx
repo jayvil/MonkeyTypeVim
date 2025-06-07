@@ -14,7 +14,7 @@ export const Navigation: React.FC = () => {
     transition: 'all 0.2s',
   });
 
-  const handleNavigation = (to: string) => (e: React.MouseEvent) => {
+  const handleClick = (e: React.MouseEvent, to: string) => {
     e.preventDefault();
     window.scrollTo(0, 0);
     navigate(to);
@@ -26,18 +26,26 @@ export const Navigation: React.FC = () => {
         to="/"
         className={({ isActive }) => `hover:opacity-80`}
         style={({ isActive }) => linkStyle(isActive)}
-        onClick={handleNavigation('/')}
+        onClick={(e) => handleClick(e, '/')}
         end
       >
-        Vim Type Game
+        Test
       </NavLink>
       <NavLink
         to="/learn"
         className={({ isActive }) => `hover:opacity-80`}
         style={({ isActive }) => linkStyle(isActive)}
-        onClick={handleNavigation('/learn')}
+        onClick={(e) => handleClick(e, '/learn')}
       >
-        Learn Vim
+        Learn 
+      </NavLink>
+      <NavLink
+        to="/about"
+        className={({ isActive }) => `hover:opacity-80`}
+        style={({ isActive }) => linkStyle(isActive)}
+        onClick={(e) => handleClick(e, '/about')}
+      >
+        About
       </NavLink>
     </nav>
   );

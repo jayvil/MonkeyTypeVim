@@ -177,14 +177,15 @@ export const VimTypeGame: React.FC = () => {
               className="text-2xl font-bold mb-4"
               style={{ color: currentTheme.colors.primary }}
             >
-              Test Your Vim Command Speed 
+              Test Your Vim Speed 
             </h2>
             <p 
               className="mb-6"
               style={{ color: currentTheme.colors.secondary }}
             >
-              How many vim commands can you accurately enter? Type the Vim command and press Enter after each command.
-              Press Tab + Enter during the test to restart.
+              How many vim commands can you enter correctly? <br /><br />
+              Type the Vim command and press Enter after each command. <br /><br />
+              Press Tab + Enter anytime during the test to restart.
             </p>
             <button
               onClick={handleStart}

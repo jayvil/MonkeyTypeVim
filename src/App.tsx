@@ -6,6 +6,7 @@ import { Navigation } from './components/Navigation';
 import { useTheme } from './hooks/useTheme';
 import { TypeGame } from './pages/TypeGame';
 import { Learn } from './pages/Learn';
+import { About } from './pages/About';
 
 function AppContent() {
   const { currentTheme } = useTheme();
@@ -47,6 +48,7 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<TypeGame />} />
           <Route path="/learn" element={<Learn />} />
+          <Route path="/about" element={<About />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
