@@ -8,48 +8,44 @@ const getAudioContext = () => {
   return audioContext;
 };
 
-// Generate a two-tone chime sound using the Web Audio API
+// Generate an chime sound using the Web Audio API
 export const playEndChime = () => {
   const context = getAudioContext();
-  const duration = 1.2; // Total duration in seconds
+  const duration = 0.6; // Shorter duration for a crisper sound
   
-  // Create oscillators for the two tones
-  const oscillator1 = context.createOscillator();
-  const oscillator2 = context.createOscillator();
+  // Create oscillators for a marimba-like sound
+  const oscillators = [
+    { freq: 1318.51, // E6
+      start: 0,
+      gain: 0.2 },
+    { freq: 1567.98, // G6
+      start: 0.08,
+      gain: 0.2 },
+    { freq: 2093.00, // C7
+      start: 0.16,
+      gain: 0.15 }
+  ].map(tone => {
+    const osc = context.createOscillator();
+    const gain = context.createGain();
+    
+    // Use sine waves for a softer tone
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(tone.freq, context.currentTime);
+    
+    // Create a short attack and longer decay for a marimba-like sound
+    gain.gain.setValueAtTime(0, context.currentTime + tone.start);
+    gain.gain.linearRampToValueAtTime(tone.gain, context.currentTime + tone.start + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.001, context.currentTime + tone.start + duration);
+    
+    osc.connect(gain);
+    gain.connect(context.destination);
+    
+    return { osc, gain, start: tone.start };
+  });
   
-  // First tone: A4 (440Hz)
-  oscillator1.type = 'sine';
-  oscillator1.frequency.setValueAtTime(440, context.currentTime);
-  
-  // Second tone: E5 (659.25Hz - perfect fifth above A4)
-  oscillator2.type = 'sine';
-  oscillator2.frequency.setValueAtTime(659.25, context.currentTime + 0.1);
-  
-  // Create gain nodes for volume control
-  const gainNode1 = context.createGain();
-  const gainNode2 = context.createGain();
-  
-  // First tone envelope
-  gainNode1.gain.setValueAtTime(0, context.currentTime);
-  gainNode1.gain.linearRampToValueAtTime(0.2, context.currentTime + 0.05);
-  gainNode1.gain.setValueAtTime(0.2, context.currentTime + 0.6);
-  gainNode1.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration);
-  
-  // Second tone envelope (slightly delayed start, longer sustain)
-  gainNode2.gain.setValueAtTime(0, context.currentTime);
-  gainNode2.gain.linearRampToValueAtTime(0.15, context.currentTime + 0.15);
-  gainNode2.gain.setValueAtTime(0.15, context.currentTime + 0.7);
-  gainNode2.gain.exponentialRampToValueAtTime(0.001, context.currentTime + duration);
-  
-  // Connect nodes
-  oscillator1.connect(gainNode1);
-  oscillator2.connect(gainNode2);
-  gainNode1.connect(context.destination);
-  gainNode2.connect(context.destination);
-  
-  // Play the sounds
-  oscillator1.start(context.currentTime);
-  oscillator2.start(context.currentTime + 0.1);
-  oscillator1.stop(context.currentTime + duration);
-  oscillator2.stop(context.currentTime + duration);
+  // Play the sounds in sequence
+  oscillators.forEach(({ osc, start }) => {
+    osc.start(context.currentTime + start);
+    osc.stop(context.currentTime + start + duration);
+  });
 }; 

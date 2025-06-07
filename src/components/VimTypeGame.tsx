@@ -85,7 +85,6 @@ export const VimTypeGame: React.FC = () => {
 
   const handleStop = useCallback(() => {
     endGame();
-    playEndChime();
   }, [endGame]);
 
   return (
@@ -177,7 +176,7 @@ export const VimTypeGame: React.FC = () => {
               className="text-2xl font-bold mb-4"
               style={{ color: currentTheme.colors.primary }}
             >
-              Test Your Vim Speed 
+              Test Your Vim Knowledge
             </h2>
             <p 
               className="mb-6"
