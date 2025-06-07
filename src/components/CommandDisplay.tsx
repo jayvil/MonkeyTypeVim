@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { VimCommand } from '../types/game';
 import { useTheme } from '../hooks/useTheme';
 
@@ -9,6 +9,12 @@ interface CommandDisplayProps {
 
 export const CommandDisplay: React.FC<CommandDisplayProps> = ({ command, userInput }) => {
   const { currentTheme } = useTheme();
+  const [showAnswer, setShowAnswer] = useState(false);
+
+  // Hide answer when command changes (i.e., after submission)
+  useEffect(() => {
+    setShowAnswer(false);
+  }, [command]);
 
   return (
     <div className="flex flex-col items-center gap-6">
@@ -41,24 +47,33 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({ command, userInp
       <div style={{ color: currentTheme.colors.secondary }} className="text-sm">
         Press Enter to submit your command.
       </div>
-      <button
-        type='button'
-        style={{
-          backgroundColor: currentTheme.colors.primary,
-          color: currentTheme.colors.background,
-        }}
-        className='mt-4 px-4 py-2 rounded-md hover:opacity-90 transition-opacity'
-        // onClick={() => setShowHint(!showHint)}
-        onClick={() => alert(`${command.command}`)
-      } // Temporary hint functionality
+      
+      <div className="flex flex-col items-center gap-2">
+        <button
+          type="button"
+          style={{
+            backgroundColor: showAnswer ? currentTheme.colors.secondary : currentTheme.colors.primary,
+            color: currentTheme.colors.background,
+          }}
+          className="px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
+          onClick={() => setShowAnswer(!showAnswer)}
         >
-          Show Answer
+          {showAnswer ? 'Hide Answer' : 'Show Answer'}
         </button>
-        {/* {showHint && (
-          <div className="mt-4 p-4 bg-zinc-800 rounded-md">
-            <span className="text-zinc-400">Hint: {command.command}</span>
-            </div>
-        )} */}
+        
+        {showAnswer && (
+          <div 
+            className="p-3 rounded-md font-mono text-center transition-all"
+            style={{ 
+              backgroundColor: `${currentTheme.colors.secondary}20`,
+              border: `1px solid ${currentTheme.colors.secondary}40`,
+              color: currentTheme.colors.primary,
+            }}
+          >
+            {command.command}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
