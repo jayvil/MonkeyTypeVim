@@ -1,11 +1,13 @@
 export interface VimState {
-  mode: 'normal' | 'insert' | 'visual';
+  mode: 'normal' | 'insert' | 'visual' | 'search';
   content: string;
   cursorPosition: number;
   selection: { start: number; end: number } | null;
   clipboard: string;
   lastCommand: string;
   commandBuffer: string;
+  searchBuffer: string;
+  lastSearch: string;
 }
 
 export interface VimCommand {

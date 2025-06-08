@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { VimSimulator } from './VimSimulator';
 import { CommandGuide } from './CommandGuide';
 import { LearningPath } from './LearningPath';
@@ -7,15 +7,32 @@ import { LessonSelector } from './LessonSelector';
 import { CommandCheatsheet } from './CommandCheatsheet';
 import { ProgressTracker } from './ProgressTracker';
 import { useTheme } from '../hooks/useTheme';
+import { lessons } from '../data/lessons';
+import { lessonProgressDB } from '../services/lessonProgressDB';
 
 export const VimLearningApp: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'learn' | 'practice' | 'reference'>('learn');
   const [activeLesson, setActiveLesson] = useState(0);
-  const { vimState, executeCommand, resetState } = useVimState();
   const { currentTheme } = useTheme();
+  
+  // Initialize with the first lesson's exercise text
+  const { vimState, executeCommand, resetState } = useVimState(
+    lessons[activeLesson].exercise.startingText
+  );
+
+  // Update simulator content when lesson changes
+  useEffect(() => {
+    resetState(lessons[activeLesson].exercise.startingText);
+  }, [activeLesson, resetState]);
 
   const handleTabChange = (tab: 'learn' | 'practice' | 'reference') => {
     setActiveTab(tab);
+    // Reset to default text in practice mode
+    if (tab === 'practice') {
+      resetState();
+    } else if (tab === 'learn') {
+      resetState(lessons[activeLesson].exercise.startingText);
+    }
     window.scrollTo(0, 0);
   };
 
@@ -62,7 +79,7 @@ export const VimLearningApp: React.FC = () => {
               setActiveLesson={setActiveLesson} 
             />
             <div className="mt-6">
-              <ProgressTracker />
+              <ProgressTracker key={activeLesson} />
             </div>
           </div>
           <div className="lg:col-span-2 p-4 rounded-lg" style={{ backgroundColor: `${currentTheme.colors.secondary}20` }}>

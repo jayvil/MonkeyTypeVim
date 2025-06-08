@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { lessons } from '../data/lessons';
+import { lessonProgressDB } from '../services/lessonProgressDB';
 import { useTheme } from '../hooks/useTheme';
 
 interface LessonSelectorProps {
@@ -7,33 +8,62 @@ interface LessonSelectorProps {
   setActiveLesson: (index: number) => void;
 }
 
-export const LessonSelector: React.FC<LessonSelectorProps> = ({
-  activeLesson,
-  setActiveLesson,
-}) => {
+interface LessonStatus {
+  index: number;
+  completed: boolean;
+}
+
+export const LessonSelector: React.FC<LessonSelectorProps> = ({ activeLesson, setActiveLesson }) => {
   const { currentTheme } = useTheme();
+  const [lessonStatuses, setLessonStatuses] = useState<LessonStatus[]>([]);
+
+  useEffect(() => {
+    const progress = lessonProgressDB.getAllProgress();
+    const statuses = lessons.map((_, index) => ({
+      index,
+      completed: progress[index]?.completed ?? false,
+    }));
+    setLessonStatuses(statuses);
+  }, [activeLesson]); // Refresh when active lesson changes
 
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-xl font-bold" style={{ color: currentTheme.colors.primary }}>Lessons</h2>
-      
-      <div className="flex flex-col gap-2">
-        {lessons.map((lesson, index) => (
+    <div>
+      <h2 className="text-xl font-bold mb-4" style={{ color: currentTheme.colors.primary }}>
+        Lessons
+      </h2>
+      <div className="space-y-2">
+        {lessonStatuses.map((status) => (
           <button
-            key={index}
-            className="text-left p-3 rounded-md transition-colors"
+            key={status.index}
+            onClick={() => setActiveLesson(status.index)}
+            className="w-full p-3 rounded-lg flex items-center justify-between transition-all duration-300"
             style={{
-              backgroundColor: activeLesson === index 
-                ? currentTheme.colors.primary 
-                : `${currentTheme.colors.secondary}40`,
-              color: activeLesson === index 
-                ? currentTheme.colors.background 
-                : currentTheme.colors.text,
+              backgroundColor:
+                activeLesson === status.index
+                  ? currentTheme.colors.primary
+                  : `${currentTheme.colors.secondary}20`,
+              color:
+                activeLesson === status.index
+                  ? currentTheme.colors.background
+                  : currentTheme.colors.text,
             }}
-            onClick={() => setActiveLesson(index)}
           >
-            <div className="font-bold">{lesson.title}</div>
-            <div className="text-sm mt-1" style={{ opacity: 0.8 }}>{lesson.description}</div>
+            <span className="flex-1 text-left">{lessons[status.index].title}</span>
+            {status.completed && (
+              <span
+                className="ml-2 text-sm px-2 py-1 rounded"
+                style={{
+                  backgroundColor: activeLesson === status.index
+                    ? currentTheme.colors.background
+                    : currentTheme.colors.primary,
+                  color: activeLesson === status.index
+                    ? currentTheme.colors.primary
+                    : currentTheme.colors.background,
+                }}
+              >
+                ✓
+              </span>
+            )}
           </button>
         ))}
       </div>
