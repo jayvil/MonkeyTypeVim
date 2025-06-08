@@ -90,9 +90,9 @@ export const VimTypeGame: React.FC = () => {
 
   return (
     <div className="mt-16 flex flex-col items-center gap-8 max-w-2xl mx-auto">
-      <div className="flex items-center gap-4">
-        <Timer timeLeft={timeLeft} isActive={isGameActive} />
-        {isGameActive && (
+      {isGameActive && (
+        <div className="flex items-center gap-4">
+          <Timer timeLeft={timeLeft} isActive={isGameActive} />
           <button
             onClick={handleStop}
             className="p-2 rounded-full hover:opacity-90 transition-all flex items-center justify-center"
@@ -112,8 +112,8 @@ export const VimTypeGame: React.FC = () => {
               <rect x="6" y="6" width="12" height="12" />
             </svg>
           </button>
-        )}
-      </div>
+        </div>
+      )}
       
       <div className="flex gap-4 items-center">
         {[10, 30, 45, 60].map((duration) => (
