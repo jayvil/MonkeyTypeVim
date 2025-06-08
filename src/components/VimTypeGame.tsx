@@ -115,27 +115,45 @@ export const VimTypeGame: React.FC = () => {
         </div>
       )}
       
-      <div className="flex gap-4 items-center">
-        {[10, 30, 45, 60].map((duration) => (
-          <button
-            disabled={isGameActive}
-            key={duration}
-            style={{
-              backgroundColor: selectedDuration === duration ? currentTheme.colors.primary : currentTheme.colors.secondary,
-              color: currentTheme.colors.background,
-              opacity: isGameActive ? 0.5 : 1,
-            }}
-            className="px-4 py-2 rounded-md hover:opacity-90 transition-opacity"
-            onClick={() => {
-              setSelectedDuration(duration);
-              setTimeLeft(duration);
-              setCustomDuration('');
-            }}
-          >
-            {duration}s
-          </button>
-        ))}
-        <div className="flex items-center gap-2">
+      <div 
+        className="flex flex-wrap justify-center items-center gap-3 p-4 rounded-lg"
+        style={{
+          backgroundColor: `${currentTheme.colors.secondary}10`,
+          borderColor: currentTheme.colors.secondary,
+          borderWidth: '1px',
+        }}
+      >
+        <div className="flex gap-2">
+          {[10, 30, 45, 60].map((duration) => (
+            <button
+              disabled={isGameActive}
+              key={duration}
+              style={{
+                backgroundColor: selectedDuration === duration 
+                  ? `${currentTheme.colors.primary}` 
+                  : 'transparent',
+                color: selectedDuration === duration 
+                  ? currentTheme.colors.background
+                  : currentTheme.colors.primary,
+                borderColor: currentTheme.colors.primary,
+                opacity: isGameActive ? 0.5 : 1,
+              }}
+              className={`
+                px-4 py-2 rounded-md transition-all duration-200
+                border hover:opacity-80
+                ${selectedDuration === duration ? '' : 'hover:bg-opacity-10 hover:bg-primary'}
+              `}
+              onClick={() => {
+                setSelectedDuration(duration);
+                setTimeLeft(duration);
+                setCustomDuration('');
+              }}
+            >
+              {duration}s
+            </button>
+          ))}
+        </div>
+        <div className="flex items-center gap-2 min-w-[200px]">
           <input
             type="text"
             disabled={isGameActive}
@@ -143,14 +161,24 @@ export const VimTypeGame: React.FC = () => {
             onChange={handleCustomDurationChange}
             placeholder="Custom (5-300s)"
             style={{
-              backgroundColor: `${currentTheme.colors.secondary}20`,
+              backgroundColor: 'transparent',
               color: currentTheme.colors.text,
               borderColor: currentTheme.colors.secondary,
             }}
-            className="px-3 py-2 rounded-md border w-44 focus:outline-none focus:border-2"
+            className="
+              px-3 py-2 rounded-md border w-full
+              focus:outline-none focus:border-2
+              transition-all duration-200
+              placeholder:text-secondary placeholder:opacity-50
+            "
           />
           {customDuration && (
-            <span style={{ color: currentTheme.colors.secondary }}>seconds</span>
+            <span 
+              style={{ color: currentTheme.colors.secondary }}
+              className="whitespace-nowrap"
+            >
+              seconds
+            </span>
           )}
         </div>
       </div>
