@@ -14,6 +14,11 @@ export const vimCommands: VimCommand[] = [
   { command: 'gg', description: 'Go to first line', category: 'movement' },
   { command: 'G', description: 'Go to last line', category: 'movement' },
   { command: 'Ctrl+e', description: 'Move screen down one line (without moving cursor)', category: 'movement' },
+  { command: 'Ctrl+y', description: 'Move screen up one line (without moving cursor)', category: 'movement' },
+  { command: 'Ctrl+b', description: 'Move screen up one page (cursor to last line) ', category: 'movement' },
+  { command: 'Ctrl+f', description: 'Move screen down one page (cursor to first line)', category: 'movement' },
+  { command: 'Ctrl+d', description: 'Move cursor and screen down half a page', category: 'movement' },
+  { command: 'Ctrl+u', description: 'Move cursor and screen up half a page', category: 'movement' },
 
   // Editing commands
   { command: 'i', description: 'Enter insert mode', category: 'modes' },
@@ -39,4 +44,13 @@ export const vimCommands: VimCommand[] = [
   { command: 'n', description: 'Next search result', category: 'search' },
   { command: 'N', description: 'Previous search result', category: 'search' },
   { command: '*', description: 'Search word under cursor', category: 'search' },
+
+  // Advanced commands
+  { command: 'zz', description: 'Center cursor on screen', category: 'advanced' },
+  { command: 'Ctrl+a', description: 'Increment number under cursor', category: 'advanced' },
+  { command: 'Ctrl+x', description: 'Decrement number under cursor', category: 'advanced' },
+  { command: '.', description: 'Repeat last command', category: 'advanced' },
+  { command: 'ci(', description: 'Change inside parentheses', category: 'advanced' },
+  { command: ':%s/old/new/g', description: 'Replace all occurrences', category: 'search' },
+  { command: ':s/old/new/g', description: 'Replace in current line', category: 'search' },
 ];
