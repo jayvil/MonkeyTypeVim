@@ -19,12 +19,16 @@ export const CommandCheatsheet: React.FC = () => {
         { key: 'e', description: 'Jump to end of word' },
         { key: '0', description: 'Jump to start of line' },
         { key: '$', description: 'Jump to end of line' },
-        { key: 'gg', description: 'Go to first line' },
-        { key: 'G', description: 'Go to last line' },
+        { key: 'gg', description: 'Go to the first line of document' },
+        { key: 'G', description: 'Go to the last line of document' },
         { key: '{', description: 'Jump to previous paragraph' },
         { key: '}', description: 'Jump to next paragraph' },
         { key: 'Ctrl+e', description: 'Move Screen down one line (without moving cursor)' },
-
+        { key: 'Ctrl+y', description: 'Move Screen up one line (without moving cursor)' },
+        { key: 'Ctrl+b', description: 'Move screen up one page (cursor to last line)' },
+        { key: 'Ctrl+f', description: 'Move screen down one page (cursor to first line)' },
+        { key: 'Ctrl+d', description: 'Move cursor and screen down half a page' },
+        { key: 'Ctrl+u', description: 'Move cursor and screen up half a page' },
       ]
     },
     editing: {

@@ -21,6 +21,7 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
   const [showAnswer, setShowAnswer] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [tabPressed, setTabPressed] = useState(false);
+  const [ctrlPressed, setCtrlPressed] = useState(false);
 
   // Hide answer when command changes (i.e., after submission)
   useEffect(() => {
@@ -36,16 +37,33 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
     if (e.key === 'Tab') {
       e.preventDefault(); // Prevent tab from moving focus
       setTabPressed(true);
+    } else if (e.key === 'Control') {
+      setCtrlPressed(true);
+      // Only add Ctrl+ prefix if input is empty
+      if (!userInput) {
+        onInputChange('Ctrl+');
+      }
     } else if (e.key === 'Enter') {
       if (tabPressed) {
         // If Tab was pressed before Enter, restart the game
         onRestart();
         setTabPressed(false);
       } else {
-        // Normal submit
         onSubmit();
       }
       e.preventDefault();
+    } else if (ctrlPressed) {
+      // Handle any key press while Ctrl is held
+      const key = e.key.toLowerCase();
+      if (key.length === 1) { // Only handle single character keys
+        e.preventDefault();
+        if (userInput === 'Ctrl+') {
+          onInputChange('Ctrl+' + key);
+        } else {
+          // If there's already input, append the key
+          onInputChange(userInput + key);
+        }
+      }
     } else {
       // Any other key press resets the tab state
       setTabPressed(false);
@@ -55,15 +73,22 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
   const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Tab') {
       setTabPressed(false);
+    } else if (e.key === 'Control') {
+      setCtrlPressed(false);
     }
+  };
+
+  // Handle input blur to reset Ctrl state
+  const handleBlur = () => {
+    setCtrlPressed(false);
   };
 
   return (
     <div className="flex flex-col items-center gap-6">
       <div className="text-center">
-        <p style={{ color: currentTheme.colors.secondary }} className="mb-2">
+        {/* <p style={{ color: currentTheme.colors.secondary }} className="mb-2">
           What is the VIM Command To:
-        </p>
+        </p> */}
         <div className="flex items-center gap-2 justify-center">
           {/*<span className="text-2xl font-mono text-emerald-500">{command.command}</span>*/}
           {/*<span className="text-zinc-500">-</span>*/}
@@ -79,6 +104,7 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
           onChange={(e) => onInputChange(e.target.value)}
           onKeyDown={handleKeyDown}
           onKeyUp={handleKeyUp}
+          onBlur={handleBlur}
           className="w-full p-4 rounded-md font-mono text-xl focus:outline-none"
           style={{ 
             backgroundColor: `${currentTheme.colors.background}80`,
@@ -87,11 +113,13 @@ export const CommandDisplay: React.FC<CommandDisplayProps> = ({
           }}
           autoComplete="off"
           spellCheck="false"
+          placeholder="Type the command"
         />
       </div>
       <div style={{ color: currentTheme.colors.secondary }} className="text-sm flex flex-col items-center gap-1">
         <div>Press Enter to submit your command.</div>
         <div>Press Tab + Enter to restart the test.</div>
+        <div>You can type commands or use Ctrl + key combinations.</div>
       </div>
       
       <div className="flex flex-col items-center gap-2">
